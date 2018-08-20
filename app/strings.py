@@ -8,3 +8,4 @@ socks5_help = 'SOCKS5 proxy for Telegram'
 token_help = 'token'
 
 start = 'Напиши что-нибудь умное 👇'
+error = 'Ошибка'

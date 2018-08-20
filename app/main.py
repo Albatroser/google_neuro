@@ -5,13 +5,27 @@ from telebot import apihelper
 import strings
 import time
 from googletrans import Translator
+import re
+
+
+def remove_emoji(text):
+	emoji_pattern = re.compile("["
+								u"\U0001F600-\U0001F64F"
+								u"\U0001F300-\U0001F5FF"
+								u"\U0001F680-\U0001F6FF"
+								u"\U0001F1E0-\U0001F1FF"
+								"]+", flags=re.UNICODE)
+
+	return emoji_pattern.sub(r'', text)
 
 
 def rgt(text):
 	translator = Translator()
-	translation = text
-	translation = translator.translate(translation, dest='ru', src='tg').text
-	return translation
+	f_text = remove_emoji(text)
+	if f_text != '':
+		translation = translator.translate(f_text, dest='ru', src='tg').text
+		return translation
+	return strings.error
 
 
 parser = argparse.ArgumentParser()
