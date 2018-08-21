@@ -7,14 +7,15 @@ import time
 from googletrans import Translator
 import re
 import os
+import codecs
 
 
 def write_log(message_id, username, input_text, output_text):
 	filename = 'logs/' + username + '.txt'
 	if os.path.exists(filename):
-		file = open(filename, 'a')
+		file = codecs.open(filename, 'a', 'utf-8')
 	else:
-		file = open(filename, 'w')
+		file = codecs.open(filename, 'w', 'utf-8')
 		file.write(strings.log_id + str(message_id) + '\n' + strings.log_username + username + '\n---\n\n')
 
 	file.write(strings.log_text_in + input_text + '\n\n' + strings.log_text_out + output_text + '\n---\n\n')

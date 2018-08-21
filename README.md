@@ -5,7 +5,7 @@
 ## Установка и запуск
 ```
 cd ~
-wget https://github.com/vslvcode/google_neuro-master/archive/master.zip
+wget https://github.com/vslvcode/google_neuro/archive/master.zip
 unzip master.zip
 cd google_neuro-master
 pip3 install -r requirements.txt
