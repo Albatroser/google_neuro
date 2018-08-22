@@ -16,3 +16,5 @@ log_id = 'ID: '
 log_username = 'Name: '
 log_text_in = 'in: '
 log_text_out = 'out: '
+
+keyboard_random = 'Рандом'

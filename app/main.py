@@ -2,12 +2,14 @@
 import argparse
 import telebot
 from telebot import apihelper
+from telebot import types
 import strings
 import time
 from googletrans import Translator
 import re
 import os
 import codecs
+import random
 
 
 def write_log(message_id, username, input_text, output_text):
@@ -33,8 +35,7 @@ def remove_emoji(text):
 	return emoji_pattern.sub(r'', text)
 
 
-def rgt(message):
-	translator = Translator()
+def user_text(message):
 	f_text = remove_emoji(message.text)
 	if f_text != '':
 		translation = translator.translate(f_text, dest='ru', src='tg').text
@@ -43,6 +44,31 @@ def rgt(message):
 		return translation
 	return strings.error
 
+
+def random_generator():
+	vow = 'аеиоуыэюя'
+	cons = 'бвгджзйклмнпрстфхцчшщ'
+
+	random_str = ''
+	while len(random_str) < random.randint(40, 320):
+		v = ''.join(random.choice(vow) for x in range(random.randint(1, 3)))
+		c = ''.join(random.choice(cons) for x in range(random.randint(1, 2)))
+
+		if bool(random.getrandbits(1)):
+			s = ' '
+		else:
+			s = ''
+
+		random_str += v + c + s
+	return random_str
+
+
+def random_text(message):
+	rt = random_generator()
+	translation = translator.translate(rt, dest='ru', src='tg').text
+	if logs:
+		write_log(message.chat.id, message.chat.username, rt, translation)
+	return translation
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-s', '--socks', action='store', dest='s', help=strings.socks5_help)
@@ -63,6 +89,11 @@ else:
 
 bot = telebot.TeleBot(args.t)
 
+keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+keyboard.add(strings.keyboard_random)
+
+translator = Translator()
+
 if logs:
 	if not os.path.isdir('logs'):
 		os.mkdir('logs')
@@ -73,13 +104,16 @@ def a(message):
 	str_start = strings.start
 	if logs:
 		str_start += '\n' + strings.log_warning
-	bot.send_message(message.chat.id, str_start)
+	bot.send_message(message.chat.id, str_start, reply_markup=keyboard)
 
 
 @bot.message_handler(content_types=['text'])
 def a(message):
-	answer = rgt(message)
-	bot.send_message(message.chat.id, answer)
+	if message.text != strings.keyboard_random:
+		answer = user_text(message)
+	else:
+		answer = random_text(message)
+	bot.send_message(message.chat.id, answer, reply_markup=keyboard)
 
 
 while True:
