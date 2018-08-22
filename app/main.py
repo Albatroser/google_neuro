@@ -50,7 +50,7 @@ def random_generator():
 	cons = 'бвгджзйклмнпрстфхцчшщ'
 
 	random_str = ''
-	while len(random_str) < random.randint(40, 320):
+	while len(random_str) < random.randint(80, 200):
 		v = ''.join(random.choice(vow) for x in range(random.randint(1, 3)))
 		c = ''.join(random.choice(cons) for x in range(random.randint(1, 2)))
 
@@ -73,6 +73,7 @@ def random_text(message):
 parser = argparse.ArgumentParser()
 parser.add_argument('-s', '--socks', action='store', dest='s', help=strings.socks5_help)
 parser.add_argument('-t', '--token', action='store', dest='t', help=strings.token_help)
+parser.add_argument('-c', '--channel', action='store', dest='c', help=strings.channel_help)
 parser.add_argument('-l', '--logs', action='store_true', dest='l', help=strings.logs_help)
 args = parser.parse_args()
 
@@ -111,10 +112,28 @@ def a(message):
 def a(message):
 	if message.text != strings.keyboard_random:
 		answer = user_text(message)
+		bot.send_message(message.chat.id, answer, reply_markup=keyboard)
 	else:
 		answer = random_text(message)
-	bot.send_message(message.chat.id, answer, reply_markup=keyboard)
+		if args.c is not None:
+			ikb = types.InlineKeyboardMarkup()
+			button_good = types.InlineKeyboardButton(text=strings.btn_good, callback_data='good')
+			button_bad = types.InlineKeyboardButton(text=strings.btn_bad, callback_data='bad')
+			ikb.add(button_good, button_bad)
+			bot.send_message(message.chat.id, answer, reply_markup=ikb)
+		else:
+			bot.send_message(message.chat.id, answer)
 
+
+@bot.callback_query_handler(func=lambda call: True)
+def a(call):
+	if call.data == 'good':
+		bot.send_message('@' + args.c, call.message.text)
+		bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+							  text=call.message.text + strings.posted, reply_markup=None)
+	if call.data == 'bad':
+		bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+							  text=call.message.text, reply_markup=None)
 
 while True:
 	try:

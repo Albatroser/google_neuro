@@ -6,6 +6,7 @@ no_token = 'Для запуска бота нужно обязательно у�
 
 socks5_help = 'SOCKS5 proxy for Telegram'
 token_help = 'token'
+channel_help = 'Канал для репостов'
 logs_help = 'Включить логи'
 
 start = 'Напиши что-нибудь умное.'
@@ -18,3 +19,8 @@ log_text_in = 'in: '
 log_text_out = 'out: '
 
 keyboard_random = 'Рандом'
+
+btn_good = 'Репост в канал'
+btn_bad = 'Ну такое'
+
+posted = '\n📣'
