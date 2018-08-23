@@ -2,13 +2,28 @@
 
 Создано просто ради рофла.
 
-## Установка и запуск
+## Установка
 ```
 cd ~
 wget https://github.com/vslvcode/google_neuro/archive/master.zip
 unzip master.zip
 cd google_neuro-master
 pip3 install -r requirements.txt
-cd app
+```
+
+## Запуск
+
+### Базовый функционал
+```
+cd ~/google_neuro-master/app
 python3 main.py -t токен_вашего_бота
 ```
+
+### С функцией репоста в канал
+Бот должен быть назначен администратором канала
+```
+cd ~/google_neuro-master/app
+python3 main.py -t токен_вашего_бота -c ваш_канал -a user_id_администратора
+```
+
+Для включения записи логов добавьте ```-l```.
