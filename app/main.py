@@ -109,7 +109,7 @@ if args.s is not None:
 	apihelper.proxy = {'https': 'socks5://' + args.s}
 
 if args.t is None:
-	print(strings.no_token)
+	print(strings.no_token_warning)
 
 if args.l:
 	logs = True
@@ -120,6 +120,8 @@ if (args.a and args.c) is not None:
 	repost_f = True
 else:
 	repost_f = False
+	if (args.a or args.c) is not None:
+		print(strings.channel_warning)
 
 bot = telebot.TeleBot(args.t)
 

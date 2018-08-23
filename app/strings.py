@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-no_token = 'Для запуска бота нужно обязательно указать токен\n' \
+no_token_warning = 'Для запуска бота нужно обязательно указать токен\n' \
              'Пример:\n' \
              'python3 main.py -t 1233424243:GfvdhvT2DgVtnwzefgugGUgjjElFR4Ukbu'
-
+channel_warning = 'Для постинга в каналы необходимо указать канал и user id администратора\n' \
+				  'через ключи -c и -a соответственно'
 
 socks5_help = 'SOCKS5 proxy for Telegram'
 token_help = 'token'
