@@ -76,6 +76,27 @@ def random_text(message):
 	return translation
 
 
+def random_result_check(answer):
+	frequency = {}
+	max_rp = 0
+	text = answer
+	text_l = text.lower()
+	match_pattern = re.findall(r'\b[а-я]{4,15}\b', text_l)
+
+	for word in match_pattern:
+		count = frequency.get(word, 0)
+		frequency[word] = count + 1
+
+	frequency_list = frequency.keys()
+
+	for words in frequency_list:
+		rp = 0
+		if frequency[words] > 1:
+			rp = 1
+		max_rp += rp
+	return max_rp
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument('-s', '--socks', action='store', dest='s', help=strings.socks5_help)
 parser.add_argument('-t', '--token', action='store', dest='t', help=strings.token_help)
@@ -127,6 +148,14 @@ def a(message):
 		bot.send_message(message.chat.id, answer, reply_markup=keyboard)
 	else:
 		answer = random_text(message)
+
+		att = 0
+		while random_result_check(answer) > 1:
+			if att >= 3:
+				break
+			answer = random_text(message)
+			att += 1
+
 		if repost_f:
 			ikb = types.InlineKeyboardMarkup()
 			if message.chat.id == int(args.a):
