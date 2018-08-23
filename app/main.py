@@ -95,7 +95,7 @@ if args.l:
 else:
 	logs = False
 
-if (args.a or args.c) is not None:
+if (args.a and args.c) is not None:
 	repost_f = True
 else:
 	repost_f = False
@@ -165,6 +165,7 @@ def a(call):
 		bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
 
 	if call.data == 'good_admin_s':
+		bot.send_message('@' + args.c, call.message.text)
 		bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
 							  text=call.message.text + strings.post_adm, reply_markup=None)
 	if call.data == 'bad_admin_s':
