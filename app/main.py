@@ -134,9 +134,10 @@ def random_result_check(answer):
 	if len(eng) > 2:
 		return False
 
-	# Фильтр длинного набора букв, выдаваемого нейросетью вместо нормального слова
+	# Фильтр длинного набора букв и множества отдельных букв
 	long_words = re.findall(r'\b[а-я,a-z]{17,99}\b', text_l)
-	if long_words:
+	one_l = re.findall(r'\b[а-я,a-z]{1, 2}\b', text_l)
+	if long_words or len(one_l) > 5:
 		return False
 
 	return True
@@ -198,7 +199,7 @@ def a(message):
 
 		att = 0
 		while not random_result_check(answer):
-			if att >= 5:
+			if att >= 8:
 				break
 			answer = random_text(message)
 			att += 1
