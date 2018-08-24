@@ -1,0 +1,1 @@
+rm app/main.py && rm app/strings.py && wget -P /app https://raw.githubusercontent.com/vslvcode/google_neuro/master/app/main.py && wget -P /app https://raw.githubusercontent.com/vslvcode/google_neuro/master/app/strings.py
