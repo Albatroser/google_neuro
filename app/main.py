@@ -82,19 +82,23 @@ def random_result_check(answer):
 	text = answer
 	text_l = text.lower()
 	match_pattern = re.findall(r'\b[а-я]{4,15}\b', text_l)
-
 	for word in match_pattern:
 		count = frequency.get(word, 0)
 		frequency[word] = count + 1
-
 	frequency_list = frequency.keys()
-
 	for words in frequency_list:
 		rp = 0
 		if frequency[words] > 1:
 			rp = 1
 		max_rp += rp
-	return max_rp
+	if max_rp > 0:
+		return False
+
+	eng = re.findall(r'\b[a-z]{1,15}\b', text_l)
+	if len(eng) > 2:
+		return False
+
+	return True
 
 
 parser = argparse.ArgumentParser()
@@ -152,7 +156,7 @@ def a(message):
 		answer = random_text(message)
 
 		att = 0
-		while random_result_check(answer) > 1:
+		while not random_result_check(answer):
 			if att >= 3:
 				break
 			answer = random_text(message)
