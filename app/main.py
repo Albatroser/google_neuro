@@ -50,15 +50,18 @@ def remove_from_black_list(user_id):
 
 
 def is_banned(user_id):
-	filename = 'blacklist/blacklist.txt'
-	file = codecs.open(filename, 'r', 'utf-8')
-	filetext = file.read()
-	user_id = str(user_id)
-	if user_id in filetext:
-		file.close()
-		return True
+	if os.path.exists('blacklist/blacklist.txt'):
+		filename = 'blacklist/blacklist.txt'
+		file = codecs.open(filename, 'r', 'utf-8')
+		file_text = file.read()
+		user_id = str(user_id)
+		if user_id in file_text:
+			file.close()
+			return True
+		else:
+			file.close()
+			return False
 	else:
-		file.close()
 		return False
 
 
