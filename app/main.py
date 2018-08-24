@@ -12,13 +12,13 @@ import codecs
 import random
 
 
-def write_log(message_id, username, input_text, output_text):
+def write_log(user_id, username, input_text, output_text):
 	if username is not None:
 		filename = 'logs/' + username + '.txt'
-		log_file_hdr = strings.log_id + str(message_id) + '\n' + strings.log_username + username + '\n---\n\n'
+		log_file_hdr = strings.log_id + str(user_id) + '\n' + strings.log_username + username + '\n---\n\n'
 	else:
-		log_file_hdr = strings.log_id + str(message_id) + '\n---\n\n'
-		filename = 'logs/' + str(message_id) + '.txt'
+		log_file_hdr = strings.log_id + str(user_id) + '\n---\n\n'
+		filename = 'logs/' + str(user_id) + '.txt'
 	if os.path.exists(filename):
 		file = codecs.open(filename, 'a', 'utf-8')
 	else:
@@ -27,6 +27,39 @@ def write_log(message_id, username, input_text, output_text):
 
 	file.write(strings.log_text_in + input_text + '\n\n' + strings.log_text_out + output_text + '\n---\n\n')
 	file.close()
+
+
+def write_black_list(user_id):
+	filename = 'blacklist/blacklist.txt'
+	if not os.path.exists('blacklist'):
+		os.mkdir('blacklist')
+	file = codecs.open(filename, 'a', 'utf-8')
+	file.write('\n' + user_id)
+	file.close()
+
+
+def remove_from_black_list(user_id):
+	filename = 'blacklist/blacklist.txt'
+	with open(filename) as f:
+		file = f.read().split('\n')
+	for i in range(len(file)):
+		file[i] = re.sub(user_id, '', file[i])
+	with open(filename, 'w') as f1:
+		f1.writelines(['%s' % item for item in file])
+	f1.close()
+
+
+def is_banned(user_id):
+	filename = 'blacklist/blacklist.txt'
+	file = codecs.open(filename, 'r', 'utf-8')
+	filetext = file.read()
+	user_id = str(user_id)
+	if user_id in filetext:
+		file.close()
+		return True
+	else:
+		file.close()
+		return False
 
 
 def remove_emoji(text):
@@ -157,7 +190,7 @@ def a(message):
 
 		att = 0
 		while not random_result_check(answer):
-			if att >= 3:
+			if att >= 5:
 				break
 			answer = random_text(message)
 			att += 1
@@ -170,8 +203,11 @@ def a(message):
 			else:
 				button_good = types.InlineKeyboardButton(text=strings.btn_good, callback_data='good')
 				button_bad = types.InlineKeyboardButton(text=strings.btn_bad, callback_data='bad')
-			ikb.add(button_good, button_bad)
-			bot.send_message(message.chat.id, answer, reply_markup=ikb)
+			if not is_banned(message.chat.id):
+				ikb.add(button_good, button_bad)
+				bot.send_message(message.chat.id, answer, reply_markup=ikb)
+			else:
+				bot.send_message(message.chat.id, answer)
 		else:
 			bot.send_message(message.chat.id, answer)
 
@@ -181,9 +217,11 @@ def a(call):
 	# Для пользователей
 	if call.data == 'good':
 		ikb = types.InlineKeyboardMarkup()
-		button_good = types.InlineKeyboardButton(text=strings.btn_good, callback_data='good_admin')
-		button_bad = types.InlineKeyboardButton(text=strings.btn_bad, callback_data='bad_admin')
-		ikb.add(button_good, button_bad)
+		button_good = types.InlineKeyboardButton(text=strings.btn_good_adm, callback_data='good_admin')
+		button_bad = types.InlineKeyboardButton(text=strings.btn_bad_adm, callback_data='bad_admin')
+		button_ban = types.InlineKeyboardButton(text=strings.btn_ban_adm + str(call.message.chat.id),
+												callback_data='ban' + str(call.message.chat.id))
+		ikb.add(button_good, button_bad, button_ban)
 		bot.send_message(int(args.a), strings.admin_req_hdr + call.message.text, reply_markup=ikb)
 		bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
 							  text=call.message.text + strings.post_req + ' @' + args.c, reply_markup=None)
@@ -206,6 +244,25 @@ def a(call):
 	if call.data == 'bad_admin_s':
 		bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
 							  text=call.message.text, reply_markup=None)
+
+	if call.data[0:3] == 'ban':
+		ban_id = call.data
+		ban_id = re.sub(r'[ban]', '', ban_id)
+		write_black_list(ban_id)
+		ikb = types.InlineKeyboardMarkup()
+		button_unban = types.InlineKeyboardButton(text=strings.btn_unban_adm, callback_data='unban' + ban_id)
+		ikb.add(button_unban)
+		bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+							  text=strings.admin_banned_1 + ban_id + strings.admin_banned_2, reply_markup=ikb)
+	if call.data[0:5] == 'unban':
+		unban_id = call.data
+		unban_id = re.sub(r'[unba]', '', unban_id)
+		remove_from_black_list(unban_id)
+		ikb = types.InlineKeyboardMarkup()
+		button_ban = types.InlineKeyboardButton(text=strings.btn_ban_adm, callback_data='ban' + unban_id)
+		ikb.add(button_ban)
+		bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+							  text=strings.admin_banned_1 + unban_id + strings.admin_unbanned_2, reply_markup=ikb)
 
 
 while True:
