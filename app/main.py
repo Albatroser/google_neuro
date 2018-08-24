@@ -114,7 +114,9 @@ def random_result_check(answer):
 	max_rp = 0
 	text = answer
 	text_l = text.lower()
-	match_pattern = re.findall(r'\b[а-я]{4,15}\b', text_l)
+
+	# Фильтр повторяющихся слов
+	match_pattern = re.findall(r'\b[а-я]{4,99}\b', text_l)
 	for word in match_pattern:
 		count = frequency.get(word, 0)
 		frequency[word] = count + 1
@@ -127,8 +129,14 @@ def random_result_check(answer):
 	if max_rp > 0:
 		return False
 
-	eng = re.findall(r'\b[a-z]{1,15}\b', text_l)
+	# Фильтр английских слов (не более 2-х в сообщении)
+	eng = re.findall(r'\b[a-z]{1,99}\b', text_l)
 	if len(eng) > 2:
+		return False
+
+	# Фильтр длинного набора букв, выдаваемого нейросетью вместо нормального слова
+	long_words = re.findall(r'\b[а-я,a-z]{17,99}\b', text_l)
+	if long_words:
 		return False
 
 	return True
