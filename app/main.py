@@ -245,9 +245,13 @@ def a(call):
 	if call.data == 'good_admin':
 		rps = call.message.text.replace(strings.admin_req_hdr, '')
 		bot.send_message('@' + args.c, rps)
-		bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+		et = call.message.text.replace(strings.admin_req_hdr, strings.post_req_a_adm)
+		bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+							  text=et, reply_markup=None)
 	if call.data == 'bad_admin':
-		bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+		et = call.message.text.replace(strings.admin_req_hdr, strings.post_req_d_adm)
+		bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id,
+							  text=et, reply_markup=None)
 
 	if call.data == 'good_admin_s':
 		bot.send_message('@' + args.c, call.message.text)
